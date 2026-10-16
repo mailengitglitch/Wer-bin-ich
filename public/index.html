@@ -3,111 +3,122 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Der Dümmste fliegt</title>
+<title>Wer bin ich?</title>
 <style>
-:root{--bg:#f6efe2;--panel:#fffaf0;--ink:#25201a;--muted:#6f6657;--line:#e0d4bd;--heart:#e0334c;--btn:#1d6b6b;--btn-ink:#fff;--warn:#f2b632}
+:root{--bg:#f6efe2;--panel:#fffaf0;--ink:#25201a;--muted:#6f6657;--line:#e0d4bd;--btn:#1d6b6b;--btn-ink:#fff;--warn:#f2b632;--ok:#2e9e62}
 @media (prefers-color-scheme:dark){:root{--bg:#17201f;--panel:#213130;--ink:#f3eddf;--muted:#a9b3a8;--line:#35504d;--btn:#3fb0a6;--btn-ink:#0f1a19}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;padding:20px;max-width:720px;margin-inline:auto}
-h1{font-size:2rem;margin:0 0 8px}h2{margin:0 0 10px}p{color:var(--muted);line-height:1.4}
-.card{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:20px;margin-bottom:12px}
-.q{font-size:1.8rem;line-height:1.3}
-.a{margin-top:12px;padding:10px 14px;border-radius:12px;background:var(--warn);color:#2a2000}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;padding:20px;max-width:760px;margin-inline:auto}
+h1{font-size:2rem;margin:0 0 8px}h2{margin:0 0 10px}p{color:var(--muted);line-height:1.4}a{color:var(--btn)}
+.card{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:18px;margin-bottom:12px}
 input{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:11px;margin-bottom:8px}
 button{font:inherit;border:0;border-radius:14px;padding:13px 16px;background:var(--btn);color:var(--btn-ink);cursor:pointer;width:100%;margin-bottom:8px}
 button.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
-button:disabled{opacity:.5;cursor:default}
+button:disabled{opacity:.4;cursor:default}
 button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.chip{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:6px 12px}
-.chip.out{opacity:.4;text-decoration:line-through}.chip.off{border-style:dashed}
-.hr{color:var(--heart)}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:12px}
+.tile{background:var(--panel);border:2px solid var(--line);color:var(--ink);border-radius:18px;padding:12px 6px;margin:0;text-align:center;width:auto}
+.tile .em{font-size:2.6rem;display:block;line-height:1.1}
+.tile small{display:block;color:var(--muted);margin-top:4px;word-break:break-word}
+.tile.sel{border-color:var(--btn);background:color-mix(in srgb,var(--btn) 18%,var(--panel))}
+.tile.star{border-color:var(--warn);grid-column:span 2}.tile.star .em{font-size:3.6rem}
+.tile.me{border-style:dashed}
+.char{font-size:1.15rem;margin-top:6px;color:var(--ink)}
+.q{font-size:2.2rem;display:block}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .big{font-size:2rem;text-align:center;margin:8px 0}
-.err{color:var(--heart)}
+.err{color:#e0334c}
+.info{background:var(--warn);color:#2a2000;border-radius:12px;padding:10px 14px;margin-bottom:12px}
+.ok{color:var(--ok)}
+ol{margin:8px 0 0;padding-left:24px;line-height:1.9}.dn{text-decoration:line-through;opacity:.5}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<script type="module">
-const DISCORD_CLIENT_ID = ''; // optional: Application-ID aus dem Discord Developer Portal
-const $ = document.getElementById('app');
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const params = new URLSearchParams(location.search);
-const inDiscord = params.has('frame_id');
-let room = params.get('room') || '', ws, S = null, err = '', name = '', tick;
-
-if (inDiscord && DISCORD_CLIENT_ID) {
-  try {
-    const { DiscordSDK } = await import('/.proxy/esm/@discord/embedded-app-sdk');
-    const sdk = new DiscordSDK(DISCORD_CLIENT_ID); await sdk.ready(); room = sdk.instanceId;
-  } catch (e) { err = 'Discord-SDK konnte nicht geladen werden.'; }
-}
-const send = o => ws && ws.readyState === 1 && ws.send(JSON.stringify(o));
+<script>
+(function () {
+var AN = { '🐼': 'Panda', '🐨': 'Koala', '🦊': 'Fuchs', '🐯': 'Tiger', '🦁': 'Löwe', '🐸': 'Frosch', '🐵': 'Affe', '🐰': 'Hase', '🐶': 'Hund', '🐱': 'Katze', '🐷': 'Schwein', '🐮': 'Kuh', '🐧': 'Pinguin', '🐙': 'Krake', '🐢': 'Schildkröte', '🦉': 'Eule' };
+var app = document.getElementById('app');
+var params = new URLSearchParams(location.search), inDiscord = params.has('frame_id');
+var room = params.get('room') || '', name = '', err = '', info = '', ws, S = null, end = 0, tick, infoT;
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); }
 function connect() {
   err = 'Verbinde mit dem Server …'; draw();
-  ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + (inDiscord ? '/.proxy' : '') + '/ws');
-  ws.onopen = () => send({ t: 'join', room, name });
-  ws.onmessage = e => { const m = JSON.parse(e.data); if (m.err) { err = m.err; S = null; } else { S = m; err = ''; } draw(); };
-  ws.onerror = () => { if (!S) { err = 'Verbindung zum Server fehlgeschlagen. Warte eine Minute und versuche es nochmal.'; draw(); } };
-  ws.onclose = () => {
+  ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + (inDiscord ? '/.proxy' : '') + '/ws2');
+  ws.onopen = function () { send({ t: 'join', room: room, name: name }); };
+  ws.onerror = function () { if (!S) { err = 'Verbindung zum Server fehlgeschlagen. Warte eine Minute und versuche es nochmal.'; draw(); } };
+  ws.onmessage = function (e) {
+    var m = JSON.parse(e.data);
+    if (m.err) { err = m.err; S = null; }
+    else if (m.info) { info = m.info; clearTimeout(infoT); infoT = setTimeout(function () { info = ''; draw(); }, 3500); }
+    else { S = m; err = ''; end = m.left == null ? 0 : Date.now() + m.left; }
+    draw();
+  };
+  ws.onclose = function () {
     if (S) { err = 'Verbindung verloren. Seite neu laden.'; S = null; draw(); }
-    else if (err.startsWith('Verbinde') || err.startsWith('Verbindung zum')) { err = 'Der Server hat die Verbindung beendet. Lade die Seite neu und versuche es nochmal.'; draw(); }
+    else if (err.indexOf('Verbinde') === 0 || err.indexOf('Verbindung zum') === 0) { err = 'Der Server hat die Verbindung beendet. Lade die Seite neu und versuche es nochmal.'; draw(); }
   };
 }
-const hearts = n => n > 0 ? '<span class="hr">' + '♥'.repeat(n) + '</span>' : '☠';
-const chips = () => '<div class="chips">' + S.players.map(p => `<span class="chip${p.h ? '' : ' out'}${p.on ? '' : ' off'}">${esc(p.name)} ${p.id === S.host ? '🎤' : hearts(p.h)}</span>`).join('') + '</div>';
-const askedCard = () => { const a = S.players.find(p => p.id === S.asked); return a ? `<div class="card"><p style="margin:0">Die Frage geht an</p><div class="big">${a.id === S.you ? 'Du! 🎯' : esc(a.name)}</div></div>` : ''; };
-const btn = (id, label, cls = '') => `<button id="${id}" class="${cls}">${label}</button>`;
-const on = (id, f) => { const e = document.getElementById(id); if (e) e.onclick = f; };
-const act = (id, t, extra) => on(id, () => send({ t, ...extra }));
-
+function $(id) { return document.getElementById(id); }
+function tile(p, extra, cls) {
+  return '<button class="tile ' + (cls || '') + '" ' + (extra || '') + '><span class="em">' + (p.animal || '❔') + '</span><b>' + esc(p.name) + '</b></button>';
+}
 function draw() {
   clearInterval(tick);
+  var keep = $('tx') ? $('tx').value : null, hadFocus = $('tx') && document.activeElement === $('tx');
   if (!S) {
-    $.innerHTML = `<h1>Der Dümmste fliegt</h1><p>Alle starten mit 3 Herzen. Fragen, dann wählt ihr den Dümmsten. Bei 2 Übrigen entscheiden 10 Fragen. Ideal mit Kameras im Discord-Call.</p><div class="card"><input id="nm" placeholder="Dein Name" maxlength="20" value="${esc(name)}"><input id="rm" placeholder="Raumcode (Freunde geben denselben ein)" value="${esc(room)}"${inDiscord ? ' disabled' : ''}>${btn('go', 'Beitreten')}<p class="err">${esc(err)}</p></div><p><a href="werbinich.html" style="color:var(--btn)">Anderes Spiel: „Wer bin ich?“ →</a></p>`;
-    on('go', () => {
-      name = document.getElementById('nm').value.trim(); room = document.getElementById('rm').value.trim() || 'main';
+    app.innerHTML = '<h1>Wer bin ich?</h1><p>Jeder bekommt von einem Mitspieler einen Charakter und muss ihn mit Ja/Nein-Fragen im Voicechat erraten.</p><div class="card"><input id="nm" placeholder="Dein Name" maxlength="20" value="' + esc(name) + '"><input id="rm" placeholder="Raumcode (Freunde geben denselben ein)" value="' + esc(room) + '"><button id="go">Beitreten</button><p class="err">' + esc(err) + '</p></div>';
+    $('go').onclick = function () {
+      name = $('nm').value.trim(); room = $('rm').value.trim() || 'main';
       if (!name) { err = 'Bitte Namen eingeben.'; return draw(); }
       connect();
-    });
+    };
     return;
   }
-  const host = S.you === S.host, me = S.players.find(p => p.id === S.you);
-  const others = S.players.filter(p => p.h > 0 && p.id !== S.you && p.id !== S.host);
-  let h = '';
+  var me = S.players.filter(function (p) { return p.id === S.you; })[0], host = S.you === S.host;
+  var h = info ? '<div class="info">' + esc(info) + '</div>' : '';
   if (S.ph === 'lobby') {
-    h = `<h2>Warteraum „${esc(room)}“</h2>${chips()}<p>${host ? 'Du bist Moderator und spielst nicht mit. Starte, wenn mindestens 2 Mitspieler da sind.' : 'Warte, bis der Moderator startet.'}</p>${host ? btn('st', 'Spiel starten') : ''}`;
-  } else if (S.ph === 'round') {
-    h = `<h2>Fragerunde</h2>${chips()}${askedCard()}<div class="card"><div class="row"><span>Zeit</span><b id="tm" style="font-size:2rem"></b></div></div><div class="card"><div class="q">${esc(S.q)}</div>${S.a ? `<div class="a">${esc(S.a)}${host && !S.show ? ' (nur du siehst das)' : ''}</div>` : ''}</div>${host ? btn('rv', 'Antwort für alle zeigen', 'alt') + btn('nx', 'Nächste Frage') + btn('tv', 'Jetzt abstimmen', 'alt') : '<p>Nur wer dran ist, antwortet laut im Call. Der Moderator geht durch die Fragen.</p>'}`;
-  } else if (S.ph === 'vote') {
-    const waiting = S.players.filter(p => p.h > 0 && p.on && !p.voted && p.id !== S.host).map(p => esc(p.name)).join(', ');
-    h = `<h2>Abstimmung</h2>${chips()}` + (!host && me.h > 0 ? (S.myVote ? `<div class="card"><p>Deine Stimme ist abgegeben. Es fehlen noch: ${waiting || 'niemand'}</p></div>` : '<div class="card"><p>Wer war gerade der Dümmste? Geheim.</p></div>' + others.map(p => `<button data-v="${p.id}">${esc(p.name)}</button>`).join('')) : '<p>' + (host ? 'Du moderierst und stimmst nicht ab.' : 'Du bist raus und schaust zu.') + '</p>');
-  } else if (S.ph === 'result') {
-    const r = S.res;
-    h = `<h2>Ergebnis</h2><div class="card">${S.players.filter(p => r.counts[p.id] !== undefined).map(p => `<div class="row"><span>${esc(p.name)}</span><span>${r.counts[p.id]} Stimmen</span></div>`).join('')}</div><div class="card"><div class="big">${esc(r.loser)} verliert ein Herz</div><p style="text-align:center">${r.tie ? 'Gleichstand, der Zufall hat entschieden. ' : ''}${r.out ? 'Ausgeschieden: Der Dümmste fliegt!' : ''}</p></div>${chips()}${host ? btn('ct', 'Weiter') : ''}`;
-  } else if (S.ph === 'finale') {
-    const f = S.fin, pn = f.pl[f.turn].name;
-    if (f.wait) {
-      h = `<h2>Finale</h2><div class="card"><div class="big">${esc(f.pl[0].name)} ist fertig</div><p style="text-align:center">Als Nächstes: ${esc(f.pl[1].name)}</p></div>` + (host ? btn('ct', 'Nächster Spieler startet') : '<p>Warte auf den Moderator.</p>');
-    } else {
-      h = `<h2>Finale: ${esc(pn)} ist dran</h2><div class="card"><div class="row"><span>${f.len === 1 ? 'Stechen' : 'Frage ' + (f.n + 1) + ' von ' + f.len}</span>${host ? `<span>${esc(f.pl[0].name)} ${f.s[0]} | ${esc(f.pl[1].name)} ${f.s[1]}</span>` : ''}</div></div><div class="card"><div class="q">${S.q === null ? 'Du bist gleich dran. Bitte jetzt nicht zuhören (Ton aus)!' : esc(S.q)}</div>${S.a ? `<div class="a">${esc(S.a)} (nur du siehst das)</div>` : ''}</div>` +
-        (host ? `<p>Hat ${esc(pn)} richtig geantwortet?</p>${btn('jr', 'Richtig')}${btn('jf', 'Falsch', 'alt')}` : '<p>Antwort laut im Call. Die Punkte kennt nur der Moderator.</p>');
-    }
-  } else if (S.ph === 'done') {
-    h = host ? `<h2>Beide fertig</h2><div class="card"><div class="row"><span>${esc(S.fin.pl[0].name)}</span><b>${S.fin.s[0]}</b></div><div class="row"><span>${esc(S.fin.pl[1].name)}</span><b>${S.fin.s[1]}</b></div></div>${btn('rz', 'Ergebnis für alle auflösen')}` : '<h2>Finale vorbei</h2><div class="card"><div class="big">Der Moderator löst gleich auf …</div></div>';
-  } else if (S.ph === 'tie') {
-    h = `<h2>Gleichstand!</h2><div class="card"><div class="big">${S.fin.s[0]} : ${S.fin.s[1]}</div></div>` + (host ? btn('tb', 'Stechen: je 1 Frage') : '<p>Der Moderator startet das Stechen.</p>');
-  } else if (S.ph === 'end') {
-    h = `<h1>Gewonnen!</h1><div class="card"><div class="big">${esc(S.winner)}</div><p style="text-align:center">ist nicht der Dümmste.</p></div>${S.fin && S.fin.s ? '<p style="text-align:center">Endstand: ' + esc(S.fin.pl[0].name) + ' ' + S.fin.s[0] + ' : ' + S.fin.s[1] + ' ' + esc(S.fin.pl[1].name) + '</p>' : ''}${host ? btn('rs', 'Nochmal spielen') : ''}`;
+    var taken = {}; S.players.forEach(function (p) { if (p.animal) taken[p.animal] = p.id; });
+    h += '<h2>Raum „' + esc(room) + '“</h2><div class="grid">' + S.players.map(function (p) { return '<div class="tile ' + (p.id === S.you ? 'me' : '') + '"><span class="em">' + (p.animal || '❔') + '</span><b>' + esc(p.name) + '</b></div>'; }).join('') + '</div>' +
+      '<div class="card"><p style="margin-top:0">Wähle dein Tier:</p><div class="grid">' + Object.keys(AN).map(function (a) {
+        var t = taken[a] && taken[a] !== S.you;
+        return '<button class="tile ' + (me.animal === a ? 'sel' : '') + '" data-a="' + a + '"' + (t ? ' disabled' : '') + '><span class="em">' + a + '</span><small>' + AN[a] + '</small></button>';
+      }).join('') + '</div></div>' +
+      (host ? '<button id="st"' + (S.players.length < 2 || S.players.some(function (p) { return !p.animal; }) ? ' disabled' : '') + '>Spiel starten</button><p>Mindestens 2 Spieler, alle brauchen ein Tier.</p>' : '<p>Warte, bis der Spielleiter startet.</p>');
+  } else if (S.ph === 'pick') {
+    h += '<h2>Wem gibst du einen Charakter?</h2><p>' + (me.picked ? 'Gewählt. Warte auf die anderen …' : 'Jeden Spieler kann nur einer wählen. Graue sind schon vergeben.') + '</p><div class="grid">' +
+      S.players.filter(function (p) { return p.id !== S.you; }).map(function (p) {
+        return '<button class="tile" data-p="' + p.id + '"' + (me.picked || p.taken ? ' disabled' : '') + '><span class="em">' + p.animal + '</span><b>' + esc(p.name) + '</b>' + (p.taken ? '<small>vergeben</small>' : '') + '</button>';
+      }).join('') + '</div><p>Schon gewählt: ' + S.players.filter(function (p) { return p.picked; }).map(function (p) { return esc(p.animal + ' ' + p.name); }).join(', ') + '</p>';
+  } else if (S.ph === 'write') {
+    var tg = S.players.filter(function (p) { return p.id === S.myTarget; })[0];
+    h += '<h2>Gib ' + esc(tg.name) + ' einen Charakter</h2><div class="card"><div class="row"><span>Zeit</span><b id="tm" style="font-size:2rem"></b></div></div><div class="card"><div class="big">' + tg.animal + ' ' + esc(tg.name) + '</div><input id="tx" maxlength="40" placeholder="z. B. Albert Einstein" value="' + esc(S.myText) + '"><button id="wr">' + (me.done ? 'Ändern' : 'Abschicken') + '</button><p style="margin:0" class="' + (me.done ? 'ok' : '') + '">' + (me.done ? '✓ Gespeichert. Du kannst bis zum Ende noch ändern.' : 'Ein bekannter Mensch oder eine Figur. ' + esc(tg.name) + ' darf es nicht sehen!') + '</p></div><p>Fertig: ' + S.players.filter(function (p) { return p.done; }).map(function (p) { return esc(p.animal + ' ' + p.name); }).join(', ') + '</p>';
+  } else if (S.ph === 'play' || S.ph === 'done') {
+    var done = S.ph === 'done';
+    var sorted = S.players.slice().sort(function (a, b) { return (a.place || 99) - (b.place || 99); });
+    var ord = (S.order || []).map(function (id) { return S.players.filter(function (p) { return p.id === id; })[0]; }).filter(Boolean);
+    var myPos = ord.map(function (p) { return p.id; }).indexOf(S.you) + 1;
+    var orderCard = ord.length ? '<div class="card"><b>Reihenfolge beim Fragen</b><p style="margin:4px 0 0">' + (myPos ? 'Du bist Nr. ' + myPos + '. ' : '') + (ord[0].id === S.you ? 'Du fängst an!' : esc(ord[0].name) + ' fängt an.') + '</p><ol>' + ord.map(function (p) { return '<li class="' + (p.guessed ? 'dn' : '') + '">' + p.animal + ' ' + esc(p.name) + (p.id === S.you ? ' (du)' : '') + '</li>'; }).join('') + '</ol></div>' : '';
+    h += '<h2>' + (done ? 'Auflösung' : 'Wer bin ich?') + '</h2><p>' + (done ? 'Die Runde ist vorbei. Hier die Platzierung.' : me.guessed ? '✅ Du hast es gelöst (Platz ' + me.place + '). Die anderen raten noch.' : 'Stellt Ja/Nein-Fragen im Voicechat. Wenn du es weißt, tippe deinen Charakter ein und drücke Überprüfen. Falsch? Dann rate einfach weiter.') + '</p>' + (done ? '' : orderCard) + '<div class="grid">' + (done ? sorted : S.players).map(function (p) {
+      var mine = p.id === S.you && !p.guessed && !done;
+      return '<div class="tile ' + (p.id === S.you ? 'me' : '') + '"><span class="em">' + p.animal + '</span><b>' + esc(p.name) + (p.guessed ? ' ✅ #' + p.place : '') + '</b><div class="char">' + (mine ? '<span class="q">❓</span>' : esc(p.char || '')) + '</div>' + (!done && p.tries && !p.guessed ? '<small>Versuche: ' + p.tries + ' · zuletzt: ' + esc(p.wrong) + '</small>' : p.tries ? '<small>Versuche: ' + p.tries + '</small>' : '') + '</div>';
+    }).join('') + '</div>' + (done || me.guessed ? '' : '<div class="card"><input id="tx" maxlength="60" placeholder="Wer bin ich?"><button id="gs">Überprüfen</button></div>');
   }
-  $.innerHTML = h;
-  act('st', 'start'); act('rv', 'reveal'); act('nx', 'next'); act('tv', 'toVote'); act('ct', 'cont'); act('rs', 'restart');
-  act('rz', 'resolve'); act('tb', 'tiebreak'); on('jr', () => send({ t: 'judge', w: 1 })); on('jf', () => send({ t: 'judge', w: 0 }));
-  document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => send({ t: 'vote', target: b.dataset.v }));
-  const tm = document.getElementById('tm');
-  if (tm && S.endsAt) { const f = () => tm.textContent = Math.max(0, Math.ceil((S.endsAt - Date.now()) / 1000)) + ' s'; f(); tick = setInterval(f, 500); }
+  if (host && S.ph === 'play') h += '<button class="alt" id="fn">Runde beenden und auflösen</button>';
+  if (host && S.ph !== 'lobby') h += '<button class="alt" id="rs">' + (S.ph === 'play' || S.ph === 'done' ? 'Neue Runde' : 'Abbrechen und zurück zur Lobby') + '</button>';
+  app.innerHTML = h;
+  document.querySelectorAll('[data-a]').forEach(function (b) { b.onclick = function () { send({ t: 'avatar', animal: b.getAttribute('data-a') }); }; });
+  document.querySelectorAll('[data-p]').forEach(function (b) { b.onclick = function () { send({ t: 'pick', target: b.getAttribute('data-p') }); }; });
+  function on(id, f) { var e = $(id); if (e) e.onclick = f; }
+  on('st', function () { send({ t: 'start' }); }); on('gs', function () { send({ t: 'guess', text: $('tx').value }); }); on('fn', function () { send({ t: 'finish' }); }); on('rs', function () { send({ t: 'reset' }); });
+  on('wr', function () { send({ t: 'write', text: $('tx').value }); });
+  if ($('tx')) { if (keep !== null) $('tx').value = keep; if (hadFocus) $('tx').focus(); $('tx').onkeydown = function (e) { if (e.key === 'Enter') send({ t: S.ph === 'play' ? 'guess' : 'write', text: $('tx').value }); }; }
+  var tm = $('tm');
+  if (tm && end) { var f = function () { tm.textContent = Math.max(0, Math.ceil((end - Date.now()) / 1000)) + ' s'; }; f(); tick = setInterval(f, 500); }
 }
 draw();
+})();
 </script>
 </body>
 </html>
